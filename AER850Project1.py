@@ -8,6 +8,8 @@ from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 
 ''' step 1 '''
 
+# data processing
+
 df = pd.read_csv('data/Project_1_Data.csv')
 
 ''' step 2 '''
@@ -25,4 +27,20 @@ X_test = strat_df_test.drop("Step", axis = 1)
 y_test = strat_df_test["Step"]
 
 # data visualization
+
+fig, axes = plt.subplots(2, 2)
+
+axes[0, 0].hist(y_train, bins=12)
+axes[0, 0].set_title('Step Values')
+axes[0, 1].hist(X_train['X'])
+axes[0, 1].set_title('X Values')
+axes[1, 0].hist(X_train['Y'])
+axes[1, 0].set_title('Y Values')
+axes[1, 1].hist(X_train['Z'])
+axes[1, 1].set_title('Z Values')
+
+plt.tight_layout()
+plt.show()
+
+''' step 3 '''
 
