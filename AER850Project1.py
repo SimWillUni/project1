@@ -39,9 +39,9 @@ y_test = strat_df_test["Step"]
 fig = plt.figure()
 
 ax = fig.add_subplot(projection='3d')
-scatter_plot=  ax.scatter(X_train['X'],X_train['Y'],X_train['Z'],c=y_train,cmap='winter_r')
-# cbar = plt.colorbar(scatter_plot)
-# cbar.set_label("Step")
+scatter_plot = ax.scatter(X_train['X'],X_train['Y'],X_train['Z'],c=y_train,cmap='winter_r')
+cbar = plt.colorbar(scatter_plot)
+cbar.set_label("Step")
 
 plt.show()
 
@@ -49,7 +49,7 @@ plt.show()
 ''' step 3 '''
 
 
-sns.heatmap(np.abs(X_train.corr()))
+sns.heatmap(np.abs(X_train.corr()), cmap="winter_r")
 plt.show()
 print("\nThe Correlation Matrix for the three dependent variables is as follows:\n")
 print(X_train.corr(method='pearson'))
@@ -132,7 +132,7 @@ print(cross_entropy_rfc)
 
 # Random Forest Classifier with Random Search
 
-grid_search_rfc_rand = RandomizedSearchCV(RandomForestClassifier(), params_grid_rfc, n_iter=5, scoring='neg_log_loss',random_state=50, n_jobs=-1)
+grid_search_rfc_rand = RandomizedSearchCV(RandomForestClassifier(), params_grid_rfc, n_iter=15, scoring='neg_log_loss',random_state=50, n_jobs=-1)
 grid_search_rfc_rand.fit(X_train, y_train)
 
 my_rfc_rand = grid_search_rfc_rand.best_estimator_
@@ -179,3 +179,31 @@ f1_rfc_rand = f1_score(y_test, y_pred_rfc_rand, average='macro')
 print("\nFor the Random Forest Classifier with the Randomized Search:\nThe precision is ",precision_rfc_rand,"\nThe accuracy is ",accuracy_rfc_rand,"\nThe f1 score is ",f1_rfc_rand)
 
 # Confusion Matrix for Each Model
+
+cm_svc = confusion_matrix(y_test, y_pred_svc)
+
+plt.figure()
+sns.heatmap(cm_svc, cmap='winter_r', cbar=True)
+plt.title('Confusion Matrix for Support Vector Classifier')
+plt.show()
+
+cm_dtc = confusion_matrix(y_test, y_pred_dtc)
+
+plt.figure()
+sns.heatmap(cm_dtc, cmap='winter_r', cbar=True)
+plt.title('Confusion Matrix for Decision Tree Classifier')
+plt.show()
+
+cm_rfc = confusion_matrix(y_test, y_pred_rfc)
+
+plt.figure()
+sns.heatmap(cm_rfc, cmap='winter_r', cbar=True)
+plt.title('Confusion Matrix for Random Forest Classifier')
+plt.show()
+
+cm_rfc_rand = confusion_matrix(y_test, y_pred_rfc_rand)
+
+plt.figure()
+sns.heatmap(cm_rfc_rand, cmap='winter_r', cbar=True)
+plt.title('Confusion Matrix for Random Forest Classifier with Randomized Search')
+plt.show()
