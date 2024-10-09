@@ -215,37 +215,8 @@ sns.heatmap(cm_rfc_rand, ax = axes[1,1], cmap='winter_r', cbar=True)
 axes[1, 1].set_title('RFC w/ Randomized Search')
 
 plt.show()
-'''
 
-cm_svc = confusion_matrix(y_test, y_pred_svc)
 
-plt.figure()
-sns.heatmap(cm_svc, cmap='winter_r', cbar=True)
-plt.title('Confusion Matrix for Support Vector Classifier')
-plt.show()
-
-cm_dtc = confusion_matrix(y_test, y_pred_dtc)
-
-plt.figure()
-sns.heatmap(cm_dtc, cmap='winter_r', cbar=True)
-plt.title('Confusion Matrix for Decision Tree Classifier')
-plt.show()
-
-cm_rfc = confusion_matrix(y_test, y_pred_rfc)
-
-plt.figure()
-sns.heatmap(cm_rfc, cmap='winter_r', cbar=True)
-plt.title('Confusion Matrix for Random Forest Classifier')
-plt.show()
-
-cm_rfc_rand = confusion_matrix(y_test, y_pred_rfc_rand)
-
-plt.figure()
-sns.heatmap(cm_rfc_rand, cmap='winter_r', cbar=True)
-plt.title('Confusion Matrix for Random Forest Classifier with Randomized Search')
-plt.show()
-
-'''
 ''' step 6 '''
 
 
