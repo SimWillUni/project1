@@ -60,16 +60,32 @@ params_grid_svc = {
 grid_search_svc = GridSearchCV(SVC(probability=True), params_grid_svc, cv=5, scoring='neg_log_loss')
 grid_search_svc.fit(X_train, y_train)
 my_svc = grid_search_svc.best_estimator_
-best_params = grid_search_svc.best_params_
-print("\nBest parameters:")
-print(best_params)
+best_params_svc = grid_search_svc.best_params_
+print("\nBest parameters for Support Vector Classifier:")
+print(best_params_svc)
 
-# Cross Entropy for SVC
+# Evaluation of SVC
 
 y_pred_probability = my_svc.predict_proba(X_test)
 cross_entropy_svc = log_loss(y_test, y_pred_probability)
 print("\nThe Cross Entropy for the Support Vector Classifier after grid search is:")
 print(cross_entropy_svc)
 
-# Decision Tree
+# Decision Tree Classifier
+
+params_grid_dtc = {
+    'criterion': ['gini','entropy'],
+    'max_depth': [1, 3, 5, 10],
+    'min_samples_split': [2, 3, 4],
+    'min_samples_leaf': [2,3,4],
+    'max_features': [5,10]
+}
+grid_search_dtc = GridSearchCV(DecisionTreeClassifier(), params_grid_dtc, cv=5, scoring='neg_log_loss')
+grid_search_dtc.fit(X_train, y_train)
+my_dtc = grid_search_dtc.best_estimator_
+best_params_dtc = grid_search_dtc.best_params_
+print("\nBest parameters for Decision Tree Classifier:")
+print(best_params_dtc)
+
+# Evaluation of DTC
 
