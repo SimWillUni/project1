@@ -7,6 +7,7 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit, GridSearchCV
 from sklearn.svm import SVC
 from sklearn.metrics import log_loss
+from sklearn.tree import DecisionTreeClassifier
 
 ''' step 1 '''
 
@@ -50,32 +51,25 @@ print(X_train.corr())
 
 # Support Vector Machine
 
-my_svc = SVC(kernel='linear',probability=True)
-my_svc.fit(X_train, y_train)
-y_pred_probability = my_svc.predict_proba(X_test)
-
-# Cross Entropy SVC before grid search
-
-cross_entropy_svc_no_gs = log_loss(y_test,y_pred_probability)
-print('\nThe Cross Entropy for the Support Vector Classifier before grid search is:')
-print(cross_entropy_svc_no_gs)
-
-# Grid Search SVC
-
 params_grid_svc = {
-    'C': [0.1, 1, 10, 100],
+    'C': [1, 10, 100, 1000],
     'kernel': ['linear', 'rbf', 'poly'],
     'degree': [2, 3, 4],
     'gamma': ['scale', 'auto']
 }
 grid_search_svc = GridSearchCV(SVC(probability=True), params_grid_svc, cv=5, scoring='neg_log_loss')
 grid_search_svc.fit(X_train, y_train)
-best_model = grid_search_svc.best_estimator_
+my_svc = grid_search_svc.best_estimator_
 best_params = grid_search_svc.best_params_
 print("\nBest parameters:")
 print(best_params)
 
-y_pred_probability = best_model.predict_proba(X_test)
-cross_entropy_svc_gs = log_loss(y_test, y_pred_probability)
-print("\nThe Cross Entropy for the Support Vector Classifier after grid search is::")
-print(cross_entropy_svc_gs)
+# Cross Entropy for SVC
+
+y_pred_probability = my_svc.predict_proba(X_test)
+cross_entropy_svc = log_loss(y_test, y_pred_probability)
+print("\nThe Cross Entropy for the Support Vector Classifier after grid search is:")
+print(cross_entropy_svc)
+
+# Decision Tree
+
