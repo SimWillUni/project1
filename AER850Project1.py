@@ -37,6 +37,20 @@ y_test = strat_df_test["Step"]
 
 # data visualization
 
+fig, axes = plt.subplots(2, 2)
+
+axes[0, 0].hist(y_train, bins=12)
+axes[0, 0].set_title('Step Values')
+axes[0, 1].hist(X_train['X'])
+axes[0, 1].set_title('X Values')
+axes[1, 0].hist(X_train['Y'])
+axes[1, 0].set_title('Y Values')
+axes[1, 1].hist(X_train['Z'])
+axes[1, 1].set_title('Z Values')
+
+plt.tight_layout()
+plt.show()
+
 fig = plt.figure()
 
 ax = fig.add_subplot(projection='3d')
@@ -183,6 +197,28 @@ print("\nFor the Random Forest Classifier with the Randomized Search:\nThe preci
 
 cm_svc = confusion_matrix(y_test, y_pred_svc)
 
+cm_dtc = confusion_matrix(y_test, y_pred_dtc)
+
+cm_rfc = confusion_matrix(y_test, y_pred_rfc)
+
+cm_rfc_rand = confusion_matrix(y_test, y_pred_rfc_rand)
+
+fig, axes = plt.subplots(2, 2)
+
+sns.heatmap(cm_svc, ax = axes[0,0], cmap='winter_r', cbar=True)
+axes[0, 0].set_title('SVC')
+sns.heatmap(cm_dtc, ax = axes[0,1], cmap='winter_r', cbar=True)
+axes[0, 1].set_title('DTC')
+sns.heatmap(cm_rfc, ax = axes[1,0], cmap='winter_r', cbar=True)
+axes[1, 0].set_title('RFC')
+sns.heatmap(cm_rfc_rand, ax = axes[1,1], cmap='winter_r', cbar=True)
+axes[1, 1].set_title('RFC w/ Randomized Search')
+
+plt.show()
+'''
+
+cm_svc = confusion_matrix(y_test, y_pred_svc)
+
 plt.figure()
 sns.heatmap(cm_svc, cmap='winter_r', cbar=True)
 plt.title('Confusion Matrix for Support Vector Classifier')
@@ -209,7 +245,7 @@ sns.heatmap(cm_rfc_rand, cmap='winter_r', cbar=True)
 plt.title('Confusion Matrix for Random Forest Classifier with Randomized Search')
 plt.show()
 
-
+'''
 ''' step 6 '''
 
 
