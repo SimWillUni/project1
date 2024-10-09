@@ -5,6 +5,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
+from sklearn.svm import SVC
+from sklearn.metrics import log_loss
 
 ''' step 1 '''
 
@@ -32,8 +34,8 @@ fig = plt.figure()
 
 ax = fig.add_subplot(projection='3d')
 scatter_plot=  ax.scatter(X_train['X'],X_train['Y'],X_train['Z'],c=y_train,cmap='winter_r')
-cbar = plt.colorbar(scatter_plot)
-cbar.set_label("Step")
+# cbar = plt.colorbar(scatter_plot)
+# cbar.set_label("Step")
 
 plt.show()
 
@@ -43,3 +45,17 @@ sns.heatmap(np.abs(X_train.corr()))
 plt.show()
 print("\nThe Correlation Matrix for the three dependent variables is as follows:\n")
 print(X_train.corr())
+
+''' step 4 '''
+
+# Support Vector Machine
+
+my_svc = SVC(kernel='linear',probability=True)
+my_svc.fit(X_train, y_train)
+y_pred = my_svc.predict_proba(X_test)
+
+# Cross Entropy
+
+cross_entropy = log_loss(y_test,y_pred)
+print('\nThe Cross Entropy for the Support Vector Machine is:')
+print(cross_entropy)
