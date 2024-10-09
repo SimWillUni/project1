@@ -8,7 +8,8 @@ from sklearn.model_selection import train_test_split, StratifiedShuffleSplit, Gr
 from sklearn.svm import SVC
 from sklearn.metrics import log_loss, precision_score, f1_score, accuracy_score, confusion_matrix
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, StackingClassifier
+from sklearn.linear_model import LogisticRegression
 
 
 ''' step 1 '''
@@ -108,7 +109,7 @@ print(cross_entropy_dtc)
 # Random Forest Classifier with Grid Search
 
 params_grid_rfc = {
-    'n_estimators': [5],
+    'n_estimators': [10],
     'criterion': ['gini','entropy'],
     'max_depth': [1, 3, 5, 10],
     'min_samples_split': [2, 3, 4],
@@ -132,7 +133,7 @@ print(cross_entropy_rfc)
 
 # Random Forest Classifier with Random Search
 
-grid_search_rfc_rand = RandomizedSearchCV(RandomForestClassifier(), params_grid_rfc, n_iter=15, scoring='neg_log_loss',random_state=50, n_jobs=-1)
+grid_search_rfc_rand = RandomizedSearchCV(RandomForestClassifier(), params_grid_rfc, n_iter=20, scoring='neg_log_loss',random_state=50, n_jobs=-1)
 grid_search_rfc_rand.fit(X_train, y_train)
 
 my_rfc_rand = grid_search_rfc_rand.best_estimator_
@@ -206,4 +207,28 @@ cm_rfc_rand = confusion_matrix(y_test, y_pred_rfc_rand)
 plt.figure()
 sns.heatmap(cm_rfc_rand, cmap='winter_r', cbar=True)
 plt.title('Confusion Matrix for Random Forest Classifier with Randomized Search')
+plt.show()
+
+
+''' step 6 '''
+
+
+# Stacked Model Performance Analysis with Support Vector and Random Forest Classifiers
+
+my_stacked_model = StackingClassifier(estimators=[('SupportVector',my_svc), ('RandomForest',my_rfc)], final_estimator=LogisticRegression())
+my_stacked_model.fit(X_train,y_train)
+y_pred_stacked = my_stacked_model.predict(X_test)
+
+precision_stacked  = precision_score(y_test, y_pred_stacked, average='macro')
+accuracy_stacked = accuracy_score(y_test, y_pred_stacked)
+f1_stacked = f1_score(y_test, y_pred_stacked, average='macro')
+
+print("\nFor the Stacked Model combining Support Vector and Random Forest Classifiers:\nThe precision is ",precision_stacked,"\nThe accuracy is ",accuracy_stacked,"\nThe f1 score is ",f1_stacked)
+
+
+cm_stacked = confusion_matrix(y_test, y_pred_stacked)
+
+plt.figure()
+sns.heatmap(cm_stacked, cmap='winter_r', cbar=True)
+plt.title('Confusion Matrix for the Stacked Model')
 plt.show()
