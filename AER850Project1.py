@@ -4,10 +4,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.model_selection import train_test_split, StratifiedShuffleSplit, GridSearchCV
+from sklearn.model_selection import train_test_split, StratifiedShuffleSplit, GridSearchCV, RandomizedSearchCV
 from sklearn.svm import SVC
 from sklearn.metrics import log_loss
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 ''' step 1 '''
 
@@ -66,8 +67,8 @@ print(best_params_svc)
 
 # Evaluation of SVC
 
-y_pred_probability = my_svc.predict_proba(X_test)
-cross_entropy_svc = log_loss(y_test, y_pred_probability)
+y_pred_probability_svc = my_svc.predict_proba(X_test)
+cross_entropy_svc = log_loss(y_test, y_pred_probability_svc)
 print("\nThe Cross Entropy for the Support Vector Classifier after grid search is:")
 print(cross_entropy_svc)
 
@@ -75,7 +76,7 @@ print(cross_entropy_svc)
 
 params_grid_dtc = {
     'criterion': ['gini','entropy'],
-    'max_depth': [1, 3, 5, 10],
+    'max_depth': [5, 10, 25, 100],
     'min_samples_split': [2, 3, 4],
     'min_samples_leaf': [2,3,4],
     'max_features': [5,10]
@@ -89,3 +90,48 @@ print(best_params_dtc)
 
 # Evaluation of DTC
 
+y_pred_probability_dtc = my_dtc.predict_proba(X_test)
+cross_entropy_dtc = log_loss(y_test, y_pred_probability_dtc)
+print("\nThe Cross Entropy for the Decision Tree Classifier is:")
+print(cross_entropy_dtc)
+
+# Random Forest Classifier with Grid Search
+
+params_grid_rfc = {
+    'n_estimators': [5],
+    'criterion': ['gini','entropy'],
+    'max_depth': [1, 3, 5, 10],
+    'min_samples_split': [2, 3, 4],
+    'min_samples_leaf': [2,3,4],
+    'max_features': [5,10]
+}
+grid_search_rfc = GridSearchCV(RandomForestClassifier(), params_grid_rfc, cv=5, scoring='neg_log_loss')
+grid_search_rfc.fit(X_train, y_train)
+my_rfc = grid_search_rfc.best_estimator_
+best_params_rfc = grid_search_rfc.best_params_
+print("\nBest parameters for Random Forest Classifier using Grid Search:")
+print(best_params_rfc)
+
+# Evaluation of RFC with Grid Search
+
+y_pred_probability_rfc = my_rfc.predict_proba(X_test)
+cross_entropy_rfc = log_loss(y_test, y_pred_probability_rfc)
+print("\nThe Cross Entropy for the Random Forest Classifier using Grid Search is:")
+print(cross_entropy_rfc)
+
+# Random Forest Classifier with Random Search
+
+grid_search_rfc_rand = RandomizedSearchCV(RandomForestClassifier(), params_grid_rfc, n_iter=5, scoring='neg_log_loss',random_state=50)
+grid_search_rfc_rand.fit(X_train, y_train)
+
+my_rfc_rand = grid_search_rfc_rand.best_estimator_
+best_params_rfc_rand = grid_search_rfc_rand.best_params_
+print("\nBest parameters for Random Forest Classifier using Randomized Search:")
+print(best_params_rfc_rand)
+
+# Evaluation of RFC with Randomized Search
+
+y_pred_probability_rfc_rand = my_rfc_rand.predict_proba(X_test)
+cross_entropy_rfc_rand = log_loss(y_test, y_pred_probability_rfc_rand)
+print("\nThe Cross Entropy for the Random Forest Classifier using Randomized Search is:")
+print(cross_entropy_rfc_rand)
