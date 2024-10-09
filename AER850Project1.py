@@ -10,6 +10,7 @@ from sklearn.metrics import log_loss, precision_score, f1_score, accuracy_score,
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, StackingClassifier
 from sklearn.linear_model import LogisticRegression
+import joblib
 
 
 ''' step 1 '''
@@ -239,3 +240,12 @@ plt.figure()
 sns.heatmap(cm_stacked, cmap='winter_r', cbar=True)
 plt.title('Confusion Matrix for the Stacked Model')
 plt.show()
+
+
+''' step 7 '''
+
+joblib.dump(my_svc,'models/svc.joblib')
+joblib.dump(my_dtc,'models/dtc.joblib')
+joblib.dump(my_rfc,'models/rfc.joblib')
+joblib.dump(my_rfc_rand,'models/rfc_rand.joblib')
+joblib.dump(my_stacked_model,'models/stacked_model.joblib')
