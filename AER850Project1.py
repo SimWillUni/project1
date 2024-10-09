@@ -6,17 +6,21 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit, GridSearchCV, RandomizedSearchCV
 from sklearn.svm import SVC
-from sklearn.metrics import log_loss
+from sklearn.metrics import log_loss, precision_score, f1_score, accuracy_score, confusion_matrix
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 
+
 ''' step 1 '''
+
 
 # data processing
 
 df = pd.read_csv('data/Project_1_Data.csv')
 
+
 ''' step 2 '''
+
 
 # in order to avoid data leaks during visualization, the train-test split is done now
 
@@ -41,14 +45,18 @@ scatter_plot=  ax.scatter(X_train['X'],X_train['Y'],X_train['Z'],c=y_train,cmap=
 
 plt.show()
 
+
 ''' step 3 '''
+
 
 sns.heatmap(np.abs(X_train.corr()))
 plt.show()
 print("\nThe Correlation Matrix for the three dependent variables is as follows:\n")
-print(X_train.corr())
+print(X_train.corr(method='pearson'))
+
 
 ''' step 4 '''
+
 
 # Support Vector Machine
 
@@ -58,7 +66,7 @@ params_grid_svc = {
     'degree': [2, 3, 4],
     'gamma': ['scale', 'auto']
 }
-grid_search_svc = GridSearchCV(SVC(probability=True), params_grid_svc, cv=5, scoring='neg_log_loss')
+grid_search_svc = GridSearchCV(SVC(probability=True), params_grid_svc, cv=5, scoring='neg_log_loss', n_jobs=-1)
 grid_search_svc.fit(X_train, y_train)
 my_svc = grid_search_svc.best_estimator_
 best_params_svc = grid_search_svc.best_params_
@@ -67,6 +75,7 @@ print(best_params_svc)
 
 # Evaluation of SVC
 
+y_pred_svc = my_svc.predict(X_test)
 y_pred_probability_svc = my_svc.predict_proba(X_test)
 cross_entropy_svc = log_loss(y_test, y_pred_probability_svc)
 print("\nThe Cross Entropy for the Support Vector Classifier after grid search is:")
@@ -81,7 +90,7 @@ params_grid_dtc = {
     'min_samples_leaf': [2,3,4],
     'max_features': [5,10]
 }
-grid_search_dtc = GridSearchCV(DecisionTreeClassifier(), params_grid_dtc, cv=5, scoring='neg_log_loss')
+grid_search_dtc = GridSearchCV(DecisionTreeClassifier(), params_grid_dtc, cv=5, scoring='neg_log_loss', n_jobs=-1)
 grid_search_dtc.fit(X_train, y_train)
 my_dtc = grid_search_dtc.best_estimator_
 best_params_dtc = grid_search_dtc.best_params_
@@ -90,6 +99,7 @@ print(best_params_dtc)
 
 # Evaluation of DTC
 
+y_pred_dtc = my_dtc.predict(X_test)
 y_pred_probability_dtc = my_dtc.predict_proba(X_test)
 cross_entropy_dtc = log_loss(y_test, y_pred_probability_dtc)
 print("\nThe Cross Entropy for the Decision Tree Classifier is:")
@@ -105,7 +115,7 @@ params_grid_rfc = {
     'min_samples_leaf': [2,3,4],
     'max_features': [5,10]
 }
-grid_search_rfc = GridSearchCV(RandomForestClassifier(), params_grid_rfc, cv=5, scoring='neg_log_loss')
+grid_search_rfc = GridSearchCV(RandomForestClassifier(), params_grid_rfc, cv=5, scoring='neg_log_loss', n_jobs=-1)
 grid_search_rfc.fit(X_train, y_train)
 my_rfc = grid_search_rfc.best_estimator_
 best_params_rfc = grid_search_rfc.best_params_
@@ -114,6 +124,7 @@ print(best_params_rfc)
 
 # Evaluation of RFC with Grid Search
 
+y_pred_rfc = my_rfc.predict(X_test)
 y_pred_probability_rfc = my_rfc.predict_proba(X_test)
 cross_entropy_rfc = log_loss(y_test, y_pred_probability_rfc)
 print("\nThe Cross Entropy for the Random Forest Classifier using Grid Search is:")
@@ -121,7 +132,7 @@ print(cross_entropy_rfc)
 
 # Random Forest Classifier with Random Search
 
-grid_search_rfc_rand = RandomizedSearchCV(RandomForestClassifier(), params_grid_rfc, n_iter=5, scoring='neg_log_loss',random_state=50)
+grid_search_rfc_rand = RandomizedSearchCV(RandomForestClassifier(), params_grid_rfc, n_iter=5, scoring='neg_log_loss',random_state=50, n_jobs=-1)
 grid_search_rfc_rand.fit(X_train, y_train)
 
 my_rfc_rand = grid_search_rfc_rand.best_estimator_
@@ -131,7 +142,40 @@ print(best_params_rfc_rand)
 
 # Evaluation of RFC with Randomized Search
 
+y_pred_rfc_rand = my_rfc_rand.predict(X_test)
 y_pred_probability_rfc_rand = my_rfc_rand.predict_proba(X_test)
 cross_entropy_rfc_rand = log_loss(y_test, y_pred_probability_rfc_rand)
 print("\nThe Cross Entropy for the Random Forest Classifier using Randomized Search is:")
 print(cross_entropy_rfc_rand)
+
+
+''' step 5 '''
+
+
+# Precision, Accuracy and f1 Scores for Each Model
+
+precision_svc = precision_score(y_test, y_pred_svc, average='macro')
+accuracy_svc = accuracy_score(y_test, y_pred_svc)
+f1_svc = f1_score(y_test, y_pred_svc, average='macro')
+
+print("\nFor the Support Vector Classifier:\nThe precision is ",precision_svc,"\nThe accuracy is ",accuracy_svc,"\nThe f1 score is ",f1_svc)
+
+precision_dtc = precision_score(y_test, y_pred_dtc, average='macro')
+accuracy_dtc = accuracy_score(y_test, y_pred_dtc)
+f1_dtc = f1_score(y_test, y_pred_dtc, average='macro')
+
+print("\nFor the Decision Tree Classifier:\nThe precision is ",precision_dtc,"\nThe accuracy is ",accuracy_dtc,"\nThe f1 score is ",f1_dtc)
+
+precision_rfc = precision_score(y_test, y_pred_rfc, average='macro')
+accuracy_rfc = accuracy_score(y_test, y_pred_rfc)
+f1_rfc = f1_score(y_test, y_pred_rfc, average='macro')
+
+print("\nFor the Random Forest Classifier:\nThe precision is ",precision_rfc,"\nThe accuracy is ",accuracy_rfc,"\nThe f1 score is ",f1_rfc)
+
+precision_rfc_rand  = precision_score(y_test, y_pred_rfc_rand, average='macro')
+accuracy_rfc_rand = accuracy_score(y_test, y_pred_rfc_rand)
+f1_rfc_rand = f1_score(y_test, y_pred_rfc_rand, average='macro')
+
+print("\nFor the Random Forest Classifier with the Randomized Search:\nThe precision is ",precision_rfc_rand,"\nThe accuracy is ",accuracy_rfc_rand,"\nThe f1 score is ",f1_rfc_rand)
+
+# Confusion Matrix for Each Model
