@@ -65,10 +65,10 @@ plt.show()
 ''' step 3 '''
 
 
-sns.heatmap(np.abs(X_train.corr()), cmap="winter_r")
+sns.heatmap(np.abs(strat_df_train.corr()), cmap="winter_r")
 plt.show()
-print("\nThe Correlation Matrix for the three dependent variables is as follows:\n")
-print(X_train.corr(method='pearson'))
+print("\nThe Correlation Matrix for all four variables is as follows:\n")
+print(strat_df_train.corr(method='pearson'))
 
 
 ''' step 4 '''
